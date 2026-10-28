@@ -1,0 +1,64 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Single row (id = 1) that holds bot configuration.
+model Settings {
+  id                  Int      @id @default(1)
+  probeCaseNumber     String   @default("26STCP04050")
+  pollIntervalMinutes Int      @default(10)
+  recipients          String[] @default([])
+  paused              Boolean  @default(false)
+}
+
+enum RangeMode {
+  ABSOLUTE
+  RELATIVE
+}
+
+model Watch {
+  id                  Int       @id @default(autoincrement())
+  label               String
+  active              Boolean   @default(true)
+  courthouseCode      String
+  courthouseName      String
+  departmentCode      String
+  departmentName      String
+  reservationTypeCode String
+  reservationTypeName String
+  rangeMode           RangeMode
+  // ABSOLUTE: inclusive local dates (YYYY-MM-DD) in America/Los_Angeles.
+  dateFrom            String?
+  dateTo              String?
+  // RELATIVE: inclusive day offsets from the current Los Angeles date.
+  minDaysOut          Int?
+  maxDaysOut          Int?
+  // Allowed weekdays, 0 = Sunday. Empty means every weekday.
+  weekdays            Int[]     @default([])
+  // Inclusive local time bounds (HH:MM, 24-hour). Null means unbounded.
+  timeFrom            String?
+  timeTo              String?
+  slots               OpenSlot[]
+}
+
+// A matching slot that was open on the latest check of its watch.
+model OpenSlot {
+  id          Int       @id @default(autoincrement())
+  watchId     Int
+  watch       Watch     @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  // Local Los Angeles start time, YYYY-MM-DDTHH:MM.
+  startsAt    String
+  available   Int
+  firstSeenAt DateTime  @default(now())
+  // Null until an alert email for this slot is sent.
+  notifiedAt  DateTime?
+
+  @@unique([watchId, startsAt])
+}

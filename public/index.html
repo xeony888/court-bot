@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Court Bot</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <section id="login-view" hidden>
+    <form id="login-form" class="card narrow">
+      <h1>Court Bot</h1>
+      <label>Password <input type="password" name="password" autocomplete="current-password" required autofocus /></label>
+      <button type="submit">Sign in</button>
+      <p class="error" id="login-error"></p>
+    </form>
+  </section>
+
+  <main id="app-view" hidden>
+    <header>
+      <h1>Court Bot <span class="muted">LASC Court Reservation System monitor</span></h1>
+      <div class="actions">
+        <button id="refresh-btn" class="secondary">Refresh</button>
+        <button id="run-btn">Check now</button>
+        <button id="pause-btn" class="secondary"></button>
+        <button id="logout-btn" class="secondary">Sign out</button>
+      </div>
+    </header>
+    <p class="error" id="global-error"></p>
+
+    <section class="card">
+      <h2>Status</h2>
+      <dl id="status" class="status"></dl>
+    </section>
+
+    <section class="card">
+      <h2>Open matching slots</h2>
+      <div id="slots"></div>
+    </section>
+
+    <section class="card">
+      <div class="row-between">
+        <h2>Watches</h2>
+        <button id="add-watch-btn">Add watch</button>
+      </div>
+      <div id="watches"></div>
+      <form id="watch-form" class="watch-form" hidden>
+        <h3 id="watch-form-title"></h3>
+        <div class="grid">
+          <label class="span2">Label <input name="label" required placeholder="e.g. Notice of Hearing on Petition" /></label>
+          <label>Courthouse <select name="courthouseCode" required></select></label>
+          <label data-mode="edit">Department <select name="departmentCode"></select></label>
+          <label class="span2">Reservation type <select name="reservationTypeCode" required></select></label>
+        </div>
+        <fieldset data-mode="new">
+          <legend>Departments</legend>
+          <label class="inline"><input type="checkbox" id="dept-select-all" /> Select all</label>
+          <div id="dept-boxes" class="dept-boxes"></div>
+          <p class="muted">Creates one watch per checked department. With more than one, each label gets the department name added.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Date range</legend>
+          <label class="inline"><input type="radio" name="rangeMode" value="ABSOLUTE" /> Fixed dates</label>
+          <label class="inline"><input type="radio" name="rangeMode" value="RELATIVE" /> Days from today</label>
+          <div class="grid" data-range="ABSOLUTE">
+            <label>From <input type="date" name="dateFrom" /></label>
+            <label>To <input type="date" name="dateTo" /></label>
+          </div>
+          <div class="grid" data-range="RELATIVE">
+            <label>At least (days out) <input type="number" name="minDaysOut" min="0" step="1" /></label>
+            <label>At most (days out) <input type="number" name="maxDaysOut" min="0" step="1" /></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Filters (optional)</legend>
+          <div id="weekday-boxes" class="weekdays"></div>
+          <div class="grid">
+            <label>Earliest start time <input type="time" name="timeFrom" /></label>
+            <label>Latest start time <input type="time" name="timeTo" /></label>
+          </div>
+          <p class="muted">No weekdays checked means every weekday. Times are Los Angeles time.</p>
+        </fieldset>
+        <label class="inline"><input type="checkbox" name="active" /> Active</label>
+        <p class="error" id="watch-form-error"></p>
+        <div class="actions">
+          <button type="submit" id="watch-save-btn">Save watch</button>
+          <button type="button" id="watch-cancel-btn" class="secondary">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Settings</h2>
+      <form id="settings-form">
+        <div class="grid">
+          <label>Check every (minutes) <input type="number" name="pollIntervalMinutes" min="2" max="1440" step="1" required /></label>
+          <label>Probe case number <input name="probeCaseNumber" required /></label>
+          <label class="span2">Alert recipients (one email per line)
+            <textarea name="recipients" rows="3"></textarea>
+          </label>
+        </div>
+        <p class="muted">The bot reads calendars through the probe case. It never makes reservations.</p>
+        <p class="error" id="settings-error"></p>
+        <p class="success" id="settings-message"></p>
+        <div class="actions">
+          <button type="submit" id="settings-save-btn">Save settings</button>
+          <button type="button" id="test-email-btn" class="secondary">Send test email</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

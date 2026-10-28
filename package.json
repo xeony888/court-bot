@@ -1,0 +1,26 @@
+{
+  "name": "court-bot",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "prisma generate && tsc",
+    "start": "prisma migrate deploy && node dist/index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "express": "^5.3.0",
+    "nodemailer": "^10.1.0",
+    "pg": "^8.23.1",
+    "prisma": "^7.10.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "@types/nodemailer": "^8.0.2",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
